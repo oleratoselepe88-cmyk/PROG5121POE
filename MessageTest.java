@@ -6,8 +6,8 @@ import static org.junit.Assert.*;
 /**
  * ================================================
  * PROG5121 - Part 2
- * Author    : Mphikeleli Dlamini
- * Student No: St10511967
+ * Author    :olerato selepe
+ * Student No: st10511014
  * Date      : April 2026
  * Purpose   : JUnit tests for the Message class
  * ================================================
