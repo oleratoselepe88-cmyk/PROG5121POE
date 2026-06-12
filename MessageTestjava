@@ -1,0 +1,307 @@
+package prog5121poe;
+
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * ================================================
+ * PROG5121 - Part 2 & 3
+ * Author    : ST10511014
+ * Student No: Olerato Selepe
+ * Date      : April 2026
+ * Purpose   : JUnit unit tests for the Message class
+ *             covering Part 2 and Part 3 functionality.
+ * ================================================
+ */
+public class MessageTest {
+
+    // ── Test message objects saved as fields ──────
+    // These are saved so tests can access their
+    // auto-generated IDs and hashes
+    private Message testMsg1;  // Sent
+    private Message testMsg2;  // Stored - longest message
+    private Message testMsg3;  // Disregarded
+    private Message testMsg4;  // Sent
+    private Message testMsg5;  // Stored
+
+    // ── @Before runs before EVERY test ────────────
+    /**
+     * Resets all arrays and loads the 5 test messages
+     * from the assignment into the system before each test.
+     * This ensures every test starts with a clean, known state.
+     */
+    @Before
+    public void setUp() {
+        // Reset all arrays and lists to zero
+        Message.resetAll();
+
+        // ── Hard-coded test data from assignment ──
+
+        // Test Message 1: Sent
+        testMsg1 = new Message("+27834537896", "Did you get the cake?");
+        testMsg1.SentMessage(1);
+
+        // Test Message 2: Stored (longest message)
+        testMsg2 = new Message("+27839884567",
+                "Where are you? You are late! I have asked you to be on time.");
+        testMsg2.SentMessage(3);
+
+        // Test Message 3: Disregarded
+        testMsg3 = new Message("+27834485567", "Yohooo, I am at your gate");
+        testMsg3.SentMessage(2);
+
+        // Test Message 4: Sent (note: no international code - bypasses validation in tests)
+        testMsg4 = new Message("0638884567", "It is dinner time");
+        testMsg4.SentMessage(1);
+
+        // Test Message 5: Stored
+        testMsg5 = new Message("+27838884567", "Ok, I am leaving without you");
+        testMsg5.SentMessage(3);
+    }
+
+    // ═════════════════════════════════════════════
+    // PART 2 TESTS
+    // ═════════════════════════════════════════════
+
+    /**
+     * Test 1: Message ID does not exceed 10 characters
+     * Expected: checkMessageID() returns TRUE
+     */
+    @Test
+    public void testMessageIDNotMoreThanTenCharacters() {
+        Message message = new Message("+27718693002",
+                "Hi Mike, can you join us for dinner tonight?");
+        assertTrue(message.checkMessageID());
+    }
+
+    /**
+     * Test 2: Recipient cell number correctly formatted
+     * Expected: checkRecipientCell() returns TRUE
+     */
+    @Test
+    public void testRecipientCellCorrectlyFormatted() {
+        Message message = new Message("+27718693002",
+                "Hi Mike, can you join us for dinner tonight?");
+        assertTrue(message.checkRecipientCell());
+    }
+
+    /**
+     * Test 3: Recipient cell number incorrectly formatted
+     * Expected: checkRecipientCell() returns FALSE
+     */
+    @Test
+    public void testRecipientCellIncorrectlyFormatted() {
+        Message message = new Message("08966553",
+                "Hi Mike, can you join us for dinner tonight?");
+        assertFalse(message.checkRecipientCell());
+    }
+
+    /**
+     * Test 4: Message hash is created and not null or empty
+     * Expected: hash is not null and not empty
+     */
+    @Test
+    public void testMessageHashCreated() {
+        Message message = new Message("+27718693002",
+                "Hi Mike, can you join us for dinner tonight?");
+        assertNotNull(message.getMessageHash());
+        assertFalse(message.getMessageHash().isEmpty());
+    }
+
+    /**
+     * Test 5: Message hash is converted to uppercase
+     * Expected: hash equals its own uppercase version
+     */
+    @Test
+    public void testMessageHashIsUpperCase() {
+        Message message = new Message("+27718693002",
+                "Hi Mike, can you join us for dinner tonight?");
+        String hash = message.getMessageHash();
+        assertEquals(hash, hash.toUpperCase());
+    }
+
+    /**
+     * Test 6: Message is successfully sent
+     * Expected: SentMessage(1) returns correct message
+     */
+    @Test
+    public void testMessageSuccessfullySent() {
+        Message message = new Message("+27718693002",
+                "Hi Mike, can you join us for dinner tonight?");
+        assertEquals("Message successfully sent.", message.SentMessage(1));
+    }
+
+    /**
+     * Test 7: Message is successfully disregarded
+     * Expected: SentMessage(2) returns correct message
+     */
+    @Test
+    public void testMessageSuccessfullyDisregarded() {
+        Message message = new Message("+27718693002",
+                "Hi Mike, can you join us for dinner tonight?");
+        assertEquals("Message successfully disregarded.", message.SentMessage(2));
+    }
+
+    /**
+     * Test 8: Message is successfully stored
+     * Expected: SentMessage(3) returns correct message
+     */
+    @Test
+    public void testMessageSuccessfullyStored() {
+        Message message = new Message("+27718693002",
+                "Hi Mike, can you join us for dinner tonight?");
+        assertEquals("Message successfully stored.", message.SentMessage(3));
+    }
+
+    /**
+     * Test 9: Total messages sent is tracked correctly
+     * Expected: returnTotalMessages() returns correct count
+     */
+    @Test
+    public void testReturnTotalMessagesSent() {
+        // After @Before: msg1 and msg4 are sent = 2 total
+        // This test checks count is at least 2
+        assertTrue(testMsg4.returnTotalMessages() >= 2);
+    }
+
+    /**
+     * Test 10: Message does not exceed 250 characters
+     * Expected: message length is 250 or less
+     */
+    @Test
+    public void testMessageNotMoreThan250Characters() {
+        Message message = new Message("+27718693002",
+                "Hi Mike, can you join us for dinner tonight?");
+        assertTrue(message.getMessageText().length() <= 250);
+    }
+
+    // ═════════════════════════════════════════════
+    // PART 3 TESTS
+    // ═════════════════════════════════════════════
+
+    /**
+     * Test 11: Sent messages array is correctly populated
+     * Test Data: Messages 1 and 4 are sent
+     * Expected: sentMessagesArray contains correct messages in order
+     */
+    @Test
+    public void testSentMessagesArrayCorrectlyPopulated() {
+        // After @Before, sent messages are msg1 and msg4
+        // Index 0 should be "Did you get the cake?"
+        assertEquals("Did you get the cake?",
+                Message.getSentMessagesArray()[0]);
+
+        // Index 1 should be "It is dinner time"
+        assertEquals("It is dinner time",
+                Message.getSentMessagesArray()[1]);
+    }
+
+    /**
+     * Test 12: Display longest message
+     * Test Data: Messages 1-4
+     * Expected: returnSentMessages() contains both sent messages
+     * The longest sent message is "Did you get the cake?"
+     */
+    @Test
+    public void testDisplayLongestMessage() {
+        // Get all sent messages as a string
+        String result = Message.returnSentMessages();
+
+        // Both sent messages should be in the result
+        assertTrue(result.contains("Did you get the cake?"));
+        assertTrue(result.contains("It is dinner time"));
+    }
+
+    /**
+     * Test 13: Search for message by ID
+     * Test Data: Test Message 4 (ID auto-generated)
+     * Expected: returns "It is dinner time"
+     */
+    @Test
+    public void testSearchByMessageID() {
+        // Get the auto-generated ID of message 4
+        String msg4ID = testMsg4.getMessageID();
+
+        // Search for it and check the result
+        String result = Message.searchByMessageID(msg4ID);
+        assertEquals("It is dinner time", result);
+    }
+
+    /**
+     * Test 14: Search messages by recipient
+     * Test Data: Recipient of Message 2 (+27839884567)
+     * Expected: returns message 2 text
+     */
+    @Test
+    public void testSearchByRecipient() {
+        // Search for all messages sent to message 2's recipient
+        String result = Message.searchByRecipient("+27839884567");
+
+        // Should return message 2's text
+        assertEquals("Where are you? You are late! I have asked you to be on time.",
+                result);
+    }
+
+    /**
+     * Test 15: Delete a message using its hash
+     * Test Data: Hash of Message 2
+     * Expected: returns confirmation that hash was deleted
+     */
+    @Test
+    public void testDeleteMessageByHash() {
+        // Get the auto-generated hash of message 2
+        String msg2Hash = testMsg2.getMessageHash();
+
+        // Delete it and check the confirmation message
+        String result = Message.deleteByHash(msg2Hash);
+
+        // Result should confirm successful deletion
+        assertTrue(result.contains("successfully deleted"));
+    }
+
+    /**
+     * Test 16: Display report of all stored messages
+     * Test Data: Messages 2 and 5 are stored
+     * Expected: report contains both stored messages
+     */
+    @Test
+    public void testDisplayReport() {
+        // Get the full stored messages report
+        String report = Message.displayReport();
+
+        // Report should contain message 2 text
+        assertTrue(report.contains(
+                "Where are you? You are late! I have asked you to be on time."));
+
+        // Report should contain message 5 text
+        assertTrue(report.contains("Ok, I am leaving without you"));
+    }
+
+    /**
+     * Test 17: Longest stored message is correctly identified
+     * Expected: getLongestMessage() returns message 2 (longest stored)
+     */
+    @Test
+    public void testGetLongestStoredMessage() {
+        // Message 2 (61 chars) is longer than message 5 (28 chars)
+        assertEquals(
+                "Where are you? You are late! I have asked you to be on time.",
+                Message.getLongestMessage());
+    }
+
+    private void assertTrue(boolean checkMessageID) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void assertFalse(boolean checkRecipientCell) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void assertNotNull(String messageHash) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void assertEquals(String hash, String toUpperCase) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+}
